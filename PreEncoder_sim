@@ -1,0 +1,121 @@
+#! /opt/homebrew/Cellar/icarus-verilog/13.0/bin/vvp
+:ivl_version "13.0 (stable)" "(v13_0)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/13.0/lib/ivl/system.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/13.0/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/13.0/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/13.0/lib/ivl/v2005_math.vpi";
+:vpi_module "/opt/homebrew/Cellar/icarus-verilog/13.0/lib/ivl/va_math.vpi";
+S_0x100dc13a0 .scope module, "Decoder" "Decoder" 2 34;
+ .timescale 0 0;
+    .port_info 0 /INPUT 3 "data_in";
+    .port_info 1 /OUTPUT 8 "data_out";
+P_0x100dc5650 .param/l "ways" 0 2 35, +C4<00000000000000000000000000001000>;
+L_0xb8ac54010 .functor BUFT 1, C4<00000001>, C4<0>, C4<0>, C4<0>;
+v0x100dc1580_0 .net/2u *"_ivl_0", 7 0, L_0xb8ac54010;  1 drivers
+o0xb8ac20040 .functor BUFZ 3, c4<zzz>; HiZ drive
+v0x100dbc040_0 .net "data_in", 2 0, o0xb8ac20040;  0 drivers
+v0x100dbc0e0_0 .net "data_out", 7 0, L_0x100dc6350;  1 drivers
+L_0x100dc6350 .shift/l 8, L_0xb8ac54010, o0xb8ac20040;
+S_0x100dbd230 .scope module, "MUX" "MUX" 2 1;
+ .timescale 0 0;
+    .port_info 0 /INPUT 4 "data_in";
+    .port_info 1 /INPUT 2 "sel";
+    .port_info 2 /OUTPUT 1 "data_out";
+P_0xb8b004100 .param/l "ways" 0 2 2, +C4<00000000000000000000000000000100>;
+o0xb8ac20100 .functor BUFZ 4, c4<zzzz>; HiZ drive
+v0x100dbc180_0 .net "data_in", 3 0, o0xb8ac20100;  0 drivers
+v0x100dbc220_0 .net "data_out", 0 0, L_0x100dc63f0;  1 drivers
+o0xb8ac20160 .functor BUFZ 2, c4<zz>; HiZ drive
+v0x100dbc2c0_0 .net "sel", 1 0, o0xb8ac20160;  0 drivers
+L_0x100dc63f0 .part/v o0xb8ac20100, o0xb8ac20160, 1;
+S_0x100dbd3b0 .scope module, "PreEncoder_tb" "PreEncoder_tb" 3 2;
+ .timescale -9 -12;
+P_0xb8b004180 .param/l "ways" 0 3 3, +C4<00000000000000000000000000001000>;
+v0x100dc6210_0 .var "data_in", 7 0;
+v0x100dc62b0_0 .net "data_out", 2 0, v0x100dc0ae0_0;  1 drivers
+v0xb8b07c000_0 .var/i "i", 31 0;
+S_0x100dc08c0 .scope module, "PreEncoder_sim" "PreEncoder" 3 11, 2 11 0, S_0x100dbd3b0;
+ .timescale 0 0;
+    .port_info 0 /INPUT 8 "data_in";
+    .port_info 1 /OUTPUT 3 "data_out";
+P_0xb8b004200 .param/l "ways" 0 2 12, +C4<00000000000000000000000000001000>;
+v0x100dc0a40_0 .net "data_in", 7 0, v0x100dc6210_0;  1 drivers
+v0x100dc0ae0_0 .var "data_out", 2 0;
+v0x100dc5d70_0 .var "flag", 0 0;
+v0x100dc5e10_0 .var/i "i", 31 0;
+E_0xb8b05c740 .event anyedge, v0x100dc5d70_0, v0x100dc0a40_0;
+    .scope S_0x100dc08c0;
+T_0 ;
+    %wait E_0xb8b05c740;
+    %pushi/vec4 0, 0, 1;
+    %store/vec4 v0x100dc5d70_0, 0, 1;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0x100dc5e10_0, 0, 32;
+    %pushi/vec4 0, 0, 3;
+    %store/vec4 v0x100dc0ae0_0, 0, 3;
+    %pushi/vec4 7, 0, 32;
+    %store/vec4 v0x100dc5e10_0, 0, 32;
+T_0.0 ; Top of for-loop
+    %load/vec4 v0x100dc5e10_0;
+    %cmpi/s 0, 0, 32;
+    %flag_inv 5; GE is !LT
+	  %jmp/0xz T_0.1, 5;
+    %load/vec4 v0x100dc5d70_0;
+    %nor/r;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.3, 8;
+    %load/vec4 v0x100dc0a40_0;
+    %load/vec4 v0x100dc5e10_0;
+    %part/s 1;
+    %flag_set/vec4 8;
+    %jmp/0xz  T_0.5, 8;
+    %pushi/vec4 1, 0, 1;
+    %store/vec4 v0x100dc5d70_0, 0, 1;
+    %load/vec4 v0x100dc5e10_0;
+    %pad/s 3;
+    %store/vec4 v0x100dc0ae0_0, 0, 3;
+T_0.5 ;
+T_0.3 ;
+T_0.2 ; for-loop step statement
+    %load/vec4 v0x100dc5e10_0;
+    %subi 1, 0, 32;
+    %store/vec4 v0x100dc5e10_0, 0, 32;
+    %jmp T_0.0;
+T_0.1 ; for-loop exit label
+    %jmp T_0;
+    .thread T_0, $push;
+    .scope S_0x100dbd3b0;
+T_1 ;
+    %pushi/vec4 0, 0, 32;
+    %store/vec4 v0xb8b07c000_0, 0, 32;
+T_1.0 ; Top of for-loop
+    %load/vec4 v0xb8b07c000_0;
+    %cmpi/s 256, 0, 32;
+	  %jmp/0xz T_1.1, 5;
+    %load/vec4 v0xb8b07c000_0;
+    %pad/s 8;
+    %store/vec4 v0x100dc6210_0, 0, 8;
+    %delay 10000, 0;
+T_1.2 ; for-loop step statement
+    %load/vec4 v0xb8b07c000_0;
+    %addi 1, 0, 32;
+    %store/vec4 v0xb8b07c000_0, 0, 32;
+    %jmp T_1.0;
+T_1.1 ; for-loop exit label
+    %vpi_call 3 20 "$finish" {0 0 0};
+    %end;
+    .thread T_1;
+    .scope S_0x100dbd3b0;
+T_2 ;
+    %vpi_call 3 23 "$dumpfile", "PreEncoder_wave.vcd" {0 0 0};
+    %vpi_call 3 24 "$dumpvars", 32'sb00000000000000000000000000000000, S_0x100dbd3b0 {0 0 0};
+    %end;
+    .thread T_2;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "BasicModule.v";
+    "PreEncoder_tb.v";

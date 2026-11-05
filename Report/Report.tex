@@ -65,7 +65,8 @@ end
     \centering
     \includegraphics[width = 0.75\textwidth]{example_output.png}
 \end{figure}
-\section{实验一\ 组合电路设计}
+
+\section{实验一\ 组合逻辑电路设计}
 \noindent
 基础门电路设计：多输入门电路, 复用器\\
 基础功能模块设计：编码器, 译码器\\
@@ -270,5 +271,458 @@ endmodule
     \includegraphics[width = \textwidth]{Decoder_wave.png}
     \caption{译码器仿真波形}
 \end{figure}
+
+\section{实验二 时序逻辑电路设计}
+
+\subsection{logisim实现}
+
+\subsubsection{S-R锁存器}
+\noindent
+双稳态 + 或门, 如图\ref{SR_Latch}
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[h]{0.45\textwidth}
+        \includegraphics[width = \linewidth]{SR_Latch.png}
+        \caption{S-R锁存器}
+        \label{SR_Latch}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[h]{0.45\textwidth}
+        \includegraphics[width = \linewidth]{D_Latch.png}
+        \caption{D-锁存器}
+        \label{D_Latch}
+    \end{minipage}
+\end{figure}
+
+\subsubsection{D-锁存器}
+\noindent
+D和/D作为SR锁存器的输入, 与上CLK即可, 如图\ref{D_Latch}
+%\begin{figure}[h]
+%    \centering
+%    \includegraphics[width = 0.45\textwidth]{D_Latch.png}
+%    \caption{D-锁存器}
+%    \label{D_Latch}
+%\end{figure}
+
+\subsubsection{主从D触发器}
+两个D触发器, /CLK控制前一个, CLK控制后一个, CLK上沿时锁住前一个, 后一个存储当时输入
+
+使能信号EN: 加入一个复用器, 当EN为假时选择输入作为输入, EN为真时将D作为输入.
+
+复位信号RST: 异步复位, 优先级最高, RST为真时需要将两个锁存器的输入置0, 即图中两个与门,
+再将两个锁存器的clk均置为真, 即图中的两个或门, 于是就可以实现异步复位.
+如图\ref{D_Trigger}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.45\textwidth]{D_Trigger.png}
+    \caption{D-触发器}
+    \label{D_Trigger}
+\end{figure}
+
+
+\subsubsection{移位寄存器}
+以8位为例, 由8个D触发器组成, EN全部接1, RST端和CLK端接输入RST和CLK, 数据端由四个来源复选:
+输入端, 输出端(保持), 下一D触发器输出(右移)和上一D触发器输出(左移), 由S控制MUX. 最高输入端由Algor复选, 从0和自身输出二选一, 
+实现逻辑右移和算术右移. 最高位位的利用器和最低位的0输入可改为串行输入或者循环移位输入. 如图\ref{Register_8}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = 0.75\textwidth]{Register_8.png}
+    \caption{8位移位寄存器}
+    \label{Register_8}
+\end{figure}
+
+
+\subsubsection{44进制计数器}
+采用强置位方案.
+使用上一个实现的8位寄存器, 将输出与44(0x2c)比较, 如果相等则使能RST清零(RST实现为异步清零), 否则将输出送至加法器
+加1后作为下一周期的输入. 为实现异步清零, 将RST与强置位信号进行或操作后再接入寄存器的RST. 寄存器工作模式设为0b11(3)并行输入. 如图\ref{Counter_44}
+\begin{figure}[h]
+    \centering
+    \includegraphics[width = 0.45\textwidth]{Counter_44.png}
+    \caption{44进制计数器}
+    \label{Counter_44}
+\end{figure}
+
+\subsubsection{n分频计数器}
+将上一个计数器的输出进行与非逻辑, 再设置n为比较器另一端的常量即可, 实现略.
+
+\subsubsection{01序列检测哭}
+时序逻辑设计如图\ref{Detech01}, 实现如图\ref{Detech_01}
+\begin{figure}[h]
+    \centering
+    \begin{minipage}[h]{0.45\textwidth}
+        \includegraphics[width = \linewidth]{Detech01.JPG}
+        \caption{时序逻辑设计}
+        \label{Detech01}
+    \end{minipage}
+    \hfill
+    \begin{minipage}[h]{0.45\textwidth}
+        \includegraphics[width = \linewidth]{Detech_01.png}
+        \caption{01序列检测器}
+        \label{Detech_01}
+    \end{minipage}
+\end{figure}
+
+\subsection{verilog实现}
+
+\subsubsection{D锁存器}
+先判断是否是复位信号, 将Q赋值为0, 否则将D送入Q, 注意时序逻辑应当使用 <= 赋值.
+\begin{lstlisting}[caption = D-锁存器]
+module D_Latch (
+    input CLK,
+    input D,
+    output reg Q, NQ,
+    input RST, EN
+);
+    always @(*) begin
+        if (RST) begin
+            Q <= 0;
+            NQ <= 1;
+        end
+        else if (EN && CLK) begin
+            Q <= D;
+            NQ <= ~D;
+        end
+    end
+endmodule
+\end{lstlisting}
+
+\subsubsection{D-触发器}
+基本同D-锁存器, 只需将电平控制的CLK(@(*))变为上升沿触发(@(posedge CLK)). 可加入异步的复位与置位信号RST与SET.
+在块内部先判断是否是RST和SET引起, 实现高优先级.
+\begin{lstlisting}[caption = D-触发器]
+module D_Trigger (
+    input CLK,
+    output reg Q, NQ,
+    input D,
+    input RST, SET, EN
+);
+    always @(posedge CLK or posedge RST or posedge SET) begin
+        if (RST) begin
+            Q <= 0;
+            NQ <= 1;
+        end
+        else if (SET) begin
+            Q <= 1;
+            NQ <= 0;
+        end
+        else if (EN) begin
+            Q <= D;
+            NQ <= ~D;
+        end
+    end
+endmodule
+\end{lstlisting}
+
+\subsubsection{移位寄存器}
+12-14行异步复位优先. S为00时保持, 不做操作; 01, 10时移位; 11时将输入送输出.\\
+可以修改01的L为\verb|(Algor ? D_out[ways - 1] : L)|来实现算术右移.
+\begin{lstlisting}[caption = 移位寄存器]
+module Register #(
+    parameter ways = 8
+) (
+    input [ways - 1 : 0] D_in,
+    output reg [ways - 1 : 0] D_out,
+    input CLK,
+    input [1 : 0] S,
+    input L, R,
+    input RST
+);
+    always @(posedge CLK or posedge RST) begin
+        if (RST) begin
+            D_out <= 0;
+        end
+        else begin
+            case (S) 
+                2'b00: ;
+                2'b01: D_out <= {L, D_out[ways - 1 : 1]};
+                2'b10: D_out <= {D_out[ways - 2 : 0], R};
+                2'b11: D_out <= D_in;
+            endcase
+        end
+    end
+endmodule
+\end{lstlisting}
+
+\subsubsection{44进制计数器}
+判断是否要归零, 进行\verb|C_out|置0或\verb|C_out|自增1.\\
+注意这里是预置位电路, 归零发生在下一周期, 所以11行判断条件应当是:\\
+\verb|C_out == 6'd43|.
+\begin{lstlisting}[caption = 44进制计数器]
+module Counter_44 (
+    input clk,
+    input rst,
+    output reg [5 : 0] C_out
+);
+    always @(posedge rst or posedge clk) begin
+        if (rst) begin
+            C_out <= 6'd0;
+        end
+        else begin
+            if (C_out == 6'd44) begin
+                C_out <= 6'd0;
+            end
+            else begin
+                C_out <= C_out + 1'b1;
+            end
+        end
+    end
+endmodule
+\end{lstlisting}
+
+\subsection{verilog仿真}
+
+\subsubsection{D-锁存器}
+
+\begin{lstlisting}[caption = D-锁存器仿真]
+`timescale 1ns / 1ps
+module D_Latch_tb;
+    reg clk;
+    reg d;
+    reg rst;
+    reg en;
+    wire q;
+    wire nq;
+    D_Latch D_Latch_sim (
+        .CLK(clk),
+        .D(d),
+        .RST(rst),
+        .EN(en),
+        .Q(q),
+        .NQ(nq)
+    );
+    always begin
+        clk = ~clk;
+        #10;
+    end
+    initial begin
+        clk = 0;
+        d = 0;
+        en = 0;
+        rst = 0;
+
+        #10;
+        d = 1;
+        #20;
+        en = 1;
+        #20;
+        en = 0;
+        #20;
+        d = 0;
+        #20;
+        rst = 1;
+        #20;
+        rst = 0;
+        #20;
+        en = 1;
+        #20;
+        d = 1;
+        #20;
+        d = 0;
+        #20;
+        $finish;
+    end
+
+
+    initial begin
+        $dumpfile("D_Latch_wave.vcd");
+        $dumpvars(0, D_Latch_tb);
+    end
+endmodule
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \textwidth]{D_Latch_wave.png}
+    \caption{D-锁存器仿真波形}
+\end{figure}
+
+\subsubsection{D-触发器}
+\begin{lstlisting}[caption = D-触发器仿真]
+`timescale 1ns / 1ps
+module D_Trigger_tb;
+    reg clk;
+    reg d;
+    reg rst;
+    reg en;
+    wire q;
+    wire nq;
+    D_Trigger D_Trigger_sim (
+        .CLK(clk),
+        .D(d),
+        .RST(rst),
+        .EN(en),
+        .Q(q),
+        .NQ(nq)
+    );
+    always begin
+        #12;
+        clk = ~clk;
+    end
+
+    initial begin
+        clk = 0;
+        d = 0;
+        rst = 0;
+        en = 0;
+        #15;
+        rst = 1;
+        #15;
+        rst = 0;
+        #500;
+        $finish;
+    end
+
+    always begin
+        d = ~d;
+        #20;
+    end
+
+    always begin
+        en = ~en;
+        #25;
+    end
+    
+    initial begin
+        $dumpfile("D_Trigger_wave.vcd");
+        $dumpvars(0, D_Trigger_tb);
+    end
+endmodule
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \textwidth]{D_Trigger_wave.png}
+    \caption{D-触发器仿真波形}
+\end{figure}
+
+\subsubsection{移位寄存器}
+\begin{lstlisting}[caption = 移位寄存器仿真]
+`timescale 1ns / 1ps
+module Register_tb ();
+    parameter ways = 8;
+    reg [ways - 1 : 0] D_in;
+    wire [ways - 1 : 0] D_out;
+    reg clk;
+    reg [1 : 0] s;
+    reg l;
+    reg r;
+    reg rst;
+
+    Register #(
+        .ways(ways)
+    ) Register_sim (
+        .D_in(D_in),
+        .D_out(D_out),
+        .CLK(clk),
+        .S(s),
+        .R(r),
+        .L(l),
+        .RST(rst)
+    );
+    
+    always begin
+        #10;
+        clk = ~clk;
+    end
+
+    initial begin
+        clk = 0;
+        D_in = 0;
+        s = 0;
+        r = 0;
+        l = 0;
+        rst = 0;
+        #10;
+
+        rst = 1;
+        #20;
+        rst = 0;
+        #10;
+        #800;
+        $finish;
+    end
+
+    integer i;
+    always begin
+        for (i = 0; i < (1 << ways); i = i + 1) begin
+            D_in = i;
+            #7;
+        end
+    end
+
+    always begin
+        s = 0;
+        #100;
+        s = 3;
+        #100;
+        s = 0;
+        #100;
+        s = 1;
+        #100;
+        s = 2;
+        #100;
+        s = 3;
+    end
+
+    initial begin
+        $dumpfile("Register_wave.vcd");
+        $dumpvars(0, Register_sim);
+    end
+endmodule
+\end{lstlisting}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \textwidth]{Register_wave.png}
+    \caption{移位寄存器仿真波形}
+\end{figure}
+
+\subsubsection{44进制计数器}
+\begin{lstlisting}[caption = 44进制计数器仿真]
+`timescale 1ns / 1ps
+module Counter_44_tb;
+    reg clk;
+    reg rst;
+    wire [5 : 0] cnt;
+
+    always begin
+        #10;
+        clk = ~clk;
+    end
+
+    Counter_44 Counter_44_sim (
+        .clk(clk),
+        .rst(rst),
+        .C_out(cnt)
+    );
+
+    initial begin
+        clk = 0;
+        rst = 0;
+        #10;
+        rst = 1;
+        #10;
+        rst = 0;
+        #1000;
+        $finish;
+    end
+
+    initial begin
+        $dumpfile("Counter_44_wave.vcd");
+        $dumpvars(0, Counter_44_tb);
+    end
+endmodule
+\end{lstlisting}
+在仿真波形中可以看到, 计数不应当出现0x2c, 这是45进制的计数器.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width = \textwidth]{Counter_44_wave.png}
+    \caption{44进制计数器仿真波形}
+\end{figure}
+
+\section{3}
+
+
+
+
 
 \end{document}

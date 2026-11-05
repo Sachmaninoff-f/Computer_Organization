@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.10.21)  26 OCT 2026 22:06
+This is XeTeX, Version 3.141592653-2.6-0.999998 (TeX Live 2026) (preloaded format=xelatex 2026.10.21)  5 NOV 2026 12:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -559,13 +559,15 @@ LaTeX Font Info:    Overwriting math alphabet `\mathtt' in version `bold'
 LaTeX Font Warning: Font shape `OMX/cmex/m/n' in size <10.53937> not available
 (Font)              size <10.95> substituted on input line 2.
 
-)
+[1
+
+])
 \tf@toc=\write3
 \openout3 = `Report.toc'.
 
- [1
-
-]
+LaTeX Font Info:    Font shape `TU/STSong(0)/m/sl' in size <10.53937> not available
+(Font)              Font shape `TU/STSong(0)/m/it' tried instead on input line 40.
+ [2]
 File: surfer.png Graphic file (type bmp)
 <surfer.png>
 
@@ -603,11 +605,14 @@ Package fontspec Info:
 
 File: example_output.png Graphic file (type bmp)
 <example_output.png>
+
+Underfull \hbox (badness 10000) in paragraph at lines 70--73
+
+ []
+
 File: MUX_2.png Graphic file (type bmp)
 <MUX_2.png>
-LaTeX Font Info:    Font shape `TU/STSong(0)/m/sl' in size <10.53937> not available
-(Font)              Font shape `TU/STSong(0)/m/it' tried instead on input line 83.
- [2]
+[3]
 File: MUX_2_3.png Graphic file (type bmp)
 <MUX_2_3.png>
 File: MUX_4.png Graphic file (type bmp)
@@ -617,11 +622,11 @@ File: MUX_4.png Graphic file (type bmp)
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 103--105
+Underfull \hbox (badness 10000) in paragraph at lines 104--106
 
  []
 
-[3]
+[4]
 File: Encoder_83.png Graphic file (type bmp)
 <Encoder_83.png>
 File: PreEncoder_83.png Graphic file (type bmp)
@@ -632,19 +637,52 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 File: Decoder_38.png Graphic file (type bmp)
 <Decoder_38.png>
-[4]
+[5]
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
 LaTeX Font Info:    Font shape `TU/lmtt/bx/n' in size <9.03374> not available
-(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 148.
-[5] [6] [7]
+(Font)              Font shape `TU/lmtt/b/n' tried instead on input line 149.
+[6] [7] [8]
 File: PreEncoder_wave.png Graphic file (type bmp)
 <PreEncoder_wave.png>
- [8] [9]
+ [9] [10]
 File: Decoder_wave.png Graphic file (type bmp)
 <Decoder_wave.png>
- [10] (./Report.aux)
+File: SR_Latch.png Graphic file (type bmp)
+<SR_Latch.png>
+File: D_Latch.png Graphic file (type bmp)
+<D_Latch.png>
+
+
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[11]
+File: D_Trigger.png Graphic file (type bmp)
+<D_Trigger.png>
+ [12]
+File: Register_8.png Graphic file (type bmp)
+<Register_8.png>
+File: Counter_44.png Graphic file (type bmp)
+<Counter_44.png>
+ [13]
+File: Detech01.JPG Graphic file (type bmp)
+<Detech01.JPG>
+File: Detech_01.png Graphic file (type bmp)
+<Detech_01.png>
+ [14] [15] [16] [17] [18]
+File: D_Latch_wave.png Graphic file (type bmp)
+<D_Latch_wave.png>
+ [19] [20]
+File: D_Trigger_wave.png Graphic file (type bmp)
+<D_Trigger_wave.png>
+ [21] [22] [23]
+File: Register_wave.png Graphic file (type bmp)
+<Register_wave.png>
+ [24]
+File: Counter_44_wave.png Graphic file (type bmp)
+<Counter_44_wave.png>
+ [25] [26] (./Report.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2022/08/05>
@@ -656,12 +694,12 @@ LaTeX Font Warning: Size substitutions with differences
 
  ) 
 Here is how much of TeX's memory you used:
- 9947 strings out of 468168
- 256351 string characters out of 5432814
+ 10076 strings out of 468168
+ 257434 string characters out of 5432814
  975942 words of memory out of 5000000
- 38510 multiletter control sequences out of 15000+600000
+ 38627 multiletter control sequences out of 15000+600000
  634687 words of font info for 100 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
  93i,7n,114p,395b,1835s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on Report.pdf (10 pages).
+Output written on Report.pdf (26 pages).

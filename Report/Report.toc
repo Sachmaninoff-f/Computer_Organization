@@ -13,7 +13,7 @@
 \contentsline {subsection}{\numberline {1.3}verilog仿真}{9}{}%
 \contentsline {subsubsection}{\numberline {1.3.1}优先编码器}{9}{}%
 \contentsline {subsubsection}{\numberline {1.3.2}译码器}{10}{}%
-\contentsline {section}{\numberline {2}实验二 时序逻辑电路设计}{11}{}%
+\contentsline {section}{\numberline {2}实验二\ 时序逻辑电路设计}{11}{}%
 \contentsline {subsection}{\numberline {2.1}logisim实现}{11}{}%
 \contentsline {subsubsection}{\numberline {2.1.1}S-R锁存器}{11}{}%
 \contentsline {subsubsection}{\numberline {2.1.2}D-锁存器}{12}{}%
@@ -32,4 +32,14 @@
 \contentsline {subsubsection}{\numberline {2.3.2}D-触发器}{20}{}%
 \contentsline {subsubsection}{\numberline {2.3.3}移位寄存器}{22}{}%
 \contentsline {subsubsection}{\numberline {2.3.4}44进制计数器}{24}{}%
-\contentsline {section}{\numberline {3}3}{26}{}%
+\contentsline {section}{\numberline {3}实验三\ 算术逻辑单元设计}{26}{}%
+\contentsline {subsection}{\numberline {3.1}logisim实现}{26}{}%
+\contentsline {subsubsection}{\numberline {3.1.1}半加器与全加器}{26}{}%
+\contentsline {subsubsection}{\numberline {3.1.2}行波加法器}{26}{}%
+\contentsline {subsubsection}{\numberline {3.1.3}超前进位加法器}{27}{}%
+\contentsline {subsubsection}{\numberline {3.1.4}算术逻辑单元}{28}{}%
+\contentsline {subsection}{\numberline {3.2}verilog实现}{29}{}%
+\contentsline {subsubsection}{\numberline {3.2.1}算术逻辑单元}{29}{}%
+\contentsline {subsection}{\numberline {3.3}verilog仿真}{31}{}%
+\contentsline {subsubsection}{\numberline {3.3.1}算术逻辑单元}{31}{}%
+\contentsline {section}{\numberline {4}4}{33}{}%
